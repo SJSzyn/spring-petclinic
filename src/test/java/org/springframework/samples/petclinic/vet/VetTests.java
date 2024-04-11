@@ -18,6 +18,8 @@ package org.springframework.samples.petclinic.vet;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.SerializationUtils;
 
+import java.util.Collection;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -37,5 +39,14 @@ class VetTests {
 		assertThat(other.getLastName()).isEqualTo(vet.getLastName());
 		assertThat(other.getId()).isEqualTo(vet.getId());
 	}
+
+//	@Test
+//	void findVetBySpeciality(){
+//		// la spécialité à rechercher
+//		String specialityName = "radiology";
+//
+//		// Récupère tous les vets
+//		Collection<Vet> theVets =
+//	}
 
 }

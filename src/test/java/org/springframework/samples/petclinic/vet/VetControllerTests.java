@@ -17,6 +17,7 @@
 package org.springframework.samples.petclinic.vet;
 
 import org.assertj.core.util.Lists;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledInNativeImage;
@@ -30,6 +31,11 @@ import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+import java.util.Collection;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -47,6 +53,9 @@ class VetControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private VetController vetController;
 
 	@MockBean
 	private VetRepository vets;
@@ -95,6 +104,26 @@ class VetControllerTests {
 			.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.vetList[0].id").value(1));
+	}
+
+	@Test
+	void findVetBySpeciality(){
+		// la spécialité à rechercher
+		//String specialityName = "radiology";
+		String specialityname = helen().getSpecialties().get(0).getName();
+
+		List<Vet> found = VetController.getVetsBySpeciality(vets.findAll(), specialityname);
+		assertEquals(found.get(0).getFirstName(), helen().getFirstName());
+	}
+
+	@NotNull
+	private List<Vet> getVetsBySpeciality(String specialityname) {
+		// Récupère tous les vets
+		Collection<Vet> theVets = this.vets.findAll();
+
+		// Filtre et vérifie que l'on a bien
+		List<Vet> found = theVets.stream().filter(e -> e.getSpecialties().stream().anyMatch(spe -> spe.getName().equals(specialityname))).toList();
+		return found;
 	}
 
 }
